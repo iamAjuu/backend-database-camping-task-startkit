@@ -67,7 +67,7 @@ VALUES
     --ANS2-2-1
 INSERT INTO "CREDIT_PURCHASE" (user_id, credit_package_id, purchased_credits, price_paid)
 VALUES(
-  (SELECT id FROM "USER" WHERE email ='wXlTq@hexschooltest.io'),
+  (SELECT id FROM "USER" WHERE name ='王小明'),
   (SELECT id FROM "CREDIT_PACKAGE" WHERE name ='14堂組合包方案'),
   (SELECT credit_amount FROM "CREDIT_PACKAGE" WHERE name ='14堂組合包方案'),
   (SELECT price FROM "CREDIT_PACKAGE" WHERE name ='14堂組合包方案')
@@ -76,7 +76,7 @@ VALUES(
     --ANS2-2-2
 INSERT INTO "CREDIT_PURCHASE" (user_id, credit_package_id, purchased_credits, price_paid)
 VALUES(
-  (SELECT id FROM "USER" WHERE email ='wXlTq@hexschooltest.io'),
+  (SELECT id FROM "USER" WHERE name ='王小明'),
   (SELECT id FROM "CREDIT_PACKAGE" WHERE name ='21堂組合包方案'),
   (SELECT credit_amount FROM "CREDIT_PACKAGE" WHERE name ='21堂組合包方案'),
   (SELECT price FROM "CREDIT_PACKAGE" WHERE name ='21堂組合包方案')
@@ -85,7 +85,7 @@ VALUES(
     --ANS2-2-3
 INSERT INTO "CREDIT_PURCHASE" (user_id, credit_package_id, purchased_credits, price_paid)
 VALUES(
-  (SELECT id FROM "USER" WHERE email ='richman@hexschooltest.io'),
+  (SELECT id FROM "USER" WHERE name = '好野人'),
   (SELECT id FROM "CREDIT_PACKAGE" WHERE name ='14堂組合包方案'),
   (SELECT credit_amount FROM "CREDIT_PACKAGE" WHERE name ='14堂組合包方案'),
   (SELECT price FROM "CREDIT_PACKAGE" WHERE name ='14堂組合包方案')
@@ -267,6 +267,28 @@ GROUP BY "COURSE_BOOKING".user_id;
     -- from ( 用戶王小明的購買堂數 ) as "CREDIT_PURCHASE"
     -- inner join ( 用戶王小明的已使用堂數) as "COURSE_BOOKING"
     -- on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
+
+SELECT 
+"CREDIT_PURCHASE".user_id AS user_id,
+("CREDIT_PURCHASE".total_credit - "COURSE_BOOKING".used_credit) as remaining_credit
+FROM
+(SELECT "CREDIT_PURCHASE".user_id,
+        SUM("CREDIT_PURCHASE".purchased_credits) AS total_credit
+ FROM "CREDIT_PURCHASE"
+ WHERE "CREDIT_PURCHASE".user_id = (SELECT id FROM "USER" WHERE email = 'wXlTq@hexschooltest.io')
+ GROUP BY "CREDIT_PURCHASE".user_id
+) as "CREDIT_PURCHASE"
+
+inner join 
+(SELECT "COURSE_BOOKING".user_id,
+        COUNT (*) AS used_credit
+FROM "COURSE_BOOKING"
+WHERE "COURSE_BOOKING".user_id = (SELECT id FROM "USER" WHERE email = 'wXlTq@hexschooltest.io')
+AND status NOT IN ('課程已取消')
+GROUP BY "COURSE_BOOKING".user_id
+) as "COURSE_BOOKING"
+on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id
+
 
 
 -- ████████  █████   █     ███  

@@ -287,7 +287,7 @@ WHERE "COURSE_BOOKING".user_id = (SELECT id FROM "USER" WHERE email = 'wXlTq@hex
 AND status NOT IN ('課程已取消')
 GROUP BY "COURSE_BOOKING".user_id
 ) as "COURSE_BOOKING"
-on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id
+on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
 
 
 
